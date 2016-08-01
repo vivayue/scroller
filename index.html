@@ -1,0 +1,187 @@
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+		<title>pc端模拟滚动条</title>
+		<style>
+			*{ padding: 0; margin:0;}
+			.view{width: 400px; height: 400px; margin:50px 0 0 50px; border: solid 1px #666; background: #fff;}
+			.lcontent{width: 380px; height: 400px; overflow: hidden; float: left; position:relative; }
+			.scrollbox{width: 20px; height: 400px; float: left; background:#ddd; position:relative; z-index:1; }
+			.contain{position: absolute; left: 0; top: 0; font-size: 16px;}
+			.scrollbox .bar{z-index:2; width: 20px; height: 60px; background: red; position: absolute;left: 0; top: 0;}
+		</style>
+	</head>
+	<body>
+	<div class="view">
+		<div class="lcontent" id="lcontent">
+			<div class="contain" id="contain">
+				<p>百度为您找到相关结果约99,500,000个
+
+去哪儿网:特价机票,超值酒店,省心省钱,聪明你的旅行!官网 
+
+ 
+去哪儿网：提供国内外特价机票，酒店，旅游度假，景点门票产品一站式预订服务。125000条航线，468000家酒店，186000条度假线路，预订可省80%。实时搜索比价，7*24小时预订服务，订机票、酒店享受"担保通"全程安全保障，去哪儿都放心。更有超值旅游产品火爆团购中…… 
+www.qunar.com 2014-12    - 品牌推广
+
+
+泰国过"洋"年，立减活动最后2天！ 
+2014去哪儿温泉节,全国温泉酒店2折起 
+
+品牌酒店超值特惠 精品酒店超值热卖中 特价酒店抢购推荐 
+
+三亚湘投银泰度假酒店 广州雅居乐酒店 广州逸泉国际大酒店 
+广州白云湖畔酒店 揭西希桥酒店 广州维也纳酒店 
+九寨天堂洲际大饭店 成都金府华美达大酒店 赣州全南希桥酒店 
+广州南沙大酒店 揭阳京明温泉度假村 揭阳大北山森林公园度假村 
+
+推广链接 
+去哪儿网,特价机票1折起!－去哪儿网首页  
+
+ 
+去哪儿网,全国最低价,及时出票,改签退票灵活方便!
+
+特价机票 - 机票预订 - 机票查询 - 一折机票 - 去哪儿网机票 
+www.qunar.com  
+
+【去哪儿网】机票查询预订,酒店预订,旅游团购,度假搜...官网
+
+去哪儿Qunar.com提供机票,飞机票,特价机票,打折机票的查询预订;99元春秋航空特惠折扣机票,百元南航、海航惊喜特价机票任您挑选,国航、深航1折特价机票和折扣机票一...
+
+www.qunar.com/ 2014-11-28  - 百度快照 - 69%好评
+
+
+【火车票】火车票查询,列车时刻表-去哪儿网Qunar.com
+
+去哪儿网(Qunar.com)火车票频道提供全国列车时刻表查询、火车票查询、火车票车次查询、火车票站站查询、高铁列车时刻表及价格查询,去哪儿网火车票频道为您预定火车...
+
+train.qunar.com/ 2014-11-28  - 百度快照 - 77%好评
+百度为您找到相关结果约99,500,000个三亚湘投银泰度假酒店 广州雅居乐酒店 广州逸泉国际大酒店 
+广州白云湖畔酒店 揭西希桥酒店 广州维也纳酒店 
+九寨天堂洲际大饭店 成都金府华美达大酒店 赣州全南希桥酒店 
+广州南沙大酒店 揭阳京明温泉度假村 揭阳大北山森林公园度假村 </p>
+			</div>
+		</div>
+		<div class="scrollbox" id="scrollbox">
+			<div class="bar" id="scroll"></div>
+		</div>	
+	</div>
+	<script>
+	  	var olc = document.getElementById("lcontent");
+	  	var onr = document.getElementById("contain");
+	  	var sbox = document.getElementById("scrollbox");
+	  	var obar = document.getElementById("scroll");
+	  	// 初始化样式
+	  	var scale = olc.offsetHeight/onr.offsetHeight;
+	  	obar.style.height = Math.round(sbox.offsetHeight*scale)+'px';
+	  	//全局捕获,让一个元素可以捕获所有的鼠标事件
+		if(obar.setCapture){
+			obar.setCapture();
+		}
+		var Tmax = sbox.offsetHeight-obar.offsetHeight;
+		obar.onmousedown = function(ev){
+			var ev = ev || window.event;
+			var disY = ev.clientY-this.offsetTop;
+			document.onmousemove = function(ev){
+				var ev = ev || window.event;
+				var Top = ev.clientY-disY;
+				if(Top<0){
+					Top=0;
+				}else if(Top>Tmax){
+					Top = Tmax;
+				}
+				obar.style.top = Top+'px';
+				onr.style.top = (olc.offsetHeight - onr.offsetHeight)*Top/Tmax;
+			}
+			document.onmouseup = function(){
+				document.onmousemove = document.onmouseup = null;
+				if(obar.releaseCapture){
+					obar.releaseCapture();
+				}
+			}
+			ev.stopPropagation();
+			return false;	
+		}
+		sbox.onmousedown = function(ev){
+			var ev = ev || window.event;
+			var Top = ev.pageY-this.offsetTop;
+			// 如果点击滚动条的下面
+			if( ev.pageY>(obar.offsetHeight+obar.offsetTop) ){
+				var oTop = Top-obar.offsetHeight;
+				var target = (olc.offsetHeight - onr.offsetHeight)*oTop/Tmax;
+				doMove(obar,'top',20,oTop);
+				doMove(onr,'top',20,target);
+			}else{
+				var target = (olc.offsetHeight - onr.offsetHeight)*Top/Tmax;
+				doMove(obar,'top',20,Top);
+				doMove(onr,'top',20,target);
+			}
+			//obar.style.top = Top+'px';		
+			//onr.style.top = (olc.offsetHeight - onr.offsetHeight)*Top/Tmax+'px';
+			return false;
+		}
+function doMove ( obj, attr, dir, target, endFn ) {
+	dir = parseInt(getStyle( obj, attr )) < target ? dir : -dir;
+	clearInterval( obj.timer );
+	obj.timer = setInterval(function () {
+		var speed = parseInt(getStyle( obj, attr )) + dir;			
+		if ( speed > target && dir > 0 ||  speed < target && dir < 0  ) {
+			speed = target;
+		}
+		obj.style[attr] = speed + 'px';
+		if ( speed == target ) {
+			clearInterval( obj.timer );
+			endFn && endFn();
+		}
+	}, 30);
+}
+function getStyle(obj,attr){
+	if (obj.currentStyle) {
+		return obj.currentStyle[attr];
+	} else{
+		return getComputedStyle(obj,false)[attr];
+	}
+}
+function scrollFunc(ev){
+	var ev = ev || window.event;
+	if (ev.wheelDelta) {
+		var b = ev.wheelDelta > 0 ? true:false;
+	}else{
+		var b = ev.detail < 0 ? true:false;
+	}
+	if(b){
+		var targ1 = obar.offsetTop-40;
+		var ratio = 40/sbox.offsetHeight;
+		var targ2 = onr.offsetTop+ratio*onr.offsetHeight;
+		if(targ1<0){
+			targ1=0;
+		}
+		if(targ2>0){
+			targ2=0;
+		}
+		doMove(obar,'top',20,targ1);
+		doMove(onr,'top',20,targ2);
+	}else{
+		var targ1 = obar.offsetTop+40;
+		var ratio = 40/sbox.offsetHeight;
+		var targ2 = onr.offsetTop - ratio*onr.offsetHeight;
+		if(targ1>Tmax){
+			targ1=Tmax;
+		}
+		if(targ2<olc.offsetHeight-onr.offsetHeight){
+			targ2=olc.offsetHeight-onr.offsetHeight;
+		}
+		doMove(obar,'top',20,targ1);
+		doMove(onr,'top',20,targ2);
+	}
+	if(ev.preventDefault){
+		ev.preventDefault();
+	}
+	return false;
+}
+if(window.addEventListener){
+	olc.addEventListener('DOMMouseScroll',scrollFunc,false);
+}
+olc.onmousewheel = scrollFunc;
+	</script>	
+	</body>
+</html>
